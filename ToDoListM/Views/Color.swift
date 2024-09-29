@@ -1,18 +1,17 @@
-//
-//  Color.swift
-//  ToDoListM
-//
-//  Created by Софья Гергет on 16.09.2024.
-//
-
 import SwiftUI
 
-struct Color: View {
-    var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
-    }
-}
+extension Color {
+    init(hex: String) {
+        
+        let cleanedHex = hex.trimmingCharacters(in: .whitespacesAndNewlines).replacingOccurrences(of: "#", with: "")
 
-#Preview {
-    Color()
+        var rgb: UInt64 = 0
+        Scanner(string: cleanedHex).scanHexInt64(&rgb)
+
+        let red = Double((rgb >> 16) & 0xFF) / 255.0
+        let green = Double((rgb >> 8) & 0xFF) / 255.0
+        let blue = Double(rgb & 0xFF) / 255.0
+
+        self.init(red: red, green: green, blue: blue)
+    }
 }

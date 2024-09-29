@@ -1,18 +1,47 @@
-//
-//  DocumentPickerView.swift
-//  ToDoListM
-//
-//  Created by Софья Гергет on 18.09.2024.
-//
-
 import SwiftUI
+import UniformTypeIdentifiers
+import UIKit
 
-struct DocumentPickerView: View {
-    var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+struct DocumentPickerView: UIViewControllerRepresentable {
+    
+    @ObservedObject var listViewModel: ListViewModel
+    
+    func makeUIViewController(context: Context) -> UIDocumentPickerViewController {
+        let picker = UIDocumentPickerViewController(forOpeningContentTypes: [UTType.json])
+        picker.allowsMultipleSelection = false
+        picker.delegate = context.coordinator
+        return picker
     }
-}
 
-#Preview {
-    DocumentPickerView()
+    func updateUIViewController(_ uiViewController: UIDocumentPickerViewController, context: Context) {
+    }
+
+    func makeCoordinator() -> Coordinator {
+        return Coordinator(self)
+    }
+
+    class Coordinator: NSObject, UIDocumentPickerDelegate, UINavigationControllerDelegate {
+        
+        let parent: DocumentPickerView
+
+        init(_ parent: DocumentPickerView) {
+            self.parent = parent
+        }
+
+        func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
+            guard let selectedFileURL = urls.first else { return }
+            
+            if FileManager.default.fileExists(atPath: selectedFileURL.path) {
+                do {
+                    let data = try Data(contentsOf: selectedFileURL)
+                    let decoder = JSONDecoder()
+                    let decodedItems = try decoder.decode([ItemModel].self, from: data)
+                    parent.listViewModel.items = decodedItems // Загружаем данные в модель
+                    print("Файл успешно открыт")
+                } catch {
+                    print("Ошибка при открытии файла: \(error.localizedDescription)")
+                }
+            }
+        }
+    }
 }
