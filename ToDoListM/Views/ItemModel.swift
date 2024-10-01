@@ -1,17 +1,17 @@
 import Foundation
 
 struct ItemModel: Identifiable, Codable {
-    let id: String
-    let title: String
-    let isCompleted: Bool
+    let id: Int?
+    let description: String
+    let isDone: Bool
     
-    init(id: String = UUID().uuidString, title: String, isCompleted: Bool) {
+    init(id: Int? = nil, description: String, isDone: Bool) {
         self.id = id
-        self.title = title
-        self.isCompleted = isCompleted
+        self.description = description
+        self.isDone = isDone
     }
     
     func updateCompletion() -> ItemModel {
-        return ItemModel(id: id, title: title, isCompleted: !isCompleted)
+        return ItemModel(id: id, description: description, isDone: !isDone)
     }
 }

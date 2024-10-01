@@ -1,74 +1,25 @@
-////  ListViewModel.swift
-////  ToDoListIOS
-////
-////  Created by Софья Гергет on 13.09.2024.
-////
-//
-//import Foundation
-//
-//class ListViewModel: ObservableObject{
-//    
-//    @Published var items: [ItemModel] = []
-//    
-//    
-//    func deleteItem(indexSet: IndexSet) {
-//        items.remove(atOffsets: indexSet)
-//    }
-//    func moveItem(from:IndexSet, to: Int) {
-//        items.move(fromOffsets: from, toOffset: to)
-//    }
-//    func addItem(title: String) {
-//        let newItem = ItemModel(title: title, isCompleted: false)
-//        items.append(newItem)
-//    }
-//    func updateItem(item: ItemModel) {
-//        
-//        if let index=items.firstIndex(where: {$0.id == item.id}) {
-//            items[index] = item.updateCompletion()
-//        }
-//    }
-//    func updateItemTitle(item: ItemModel, newTitle: String) {
-//        if let index = items.firstIndex(where: { $0.id == item.id }) {
-//            items[index] = ItemModel(id: item.id, title: newTitle, isCompleted: item.isCompleted)
-//        }
-//    }
-//
-//}
-
 import Foundation
+import Combine
 
 class ListViewModel: ObservableObject {
     
     @Published var items: [ItemModel] = []
+    private var cancellables = Set<AnyCancellable>()
     
-    // Сохранение списка в JSON
-    func saveToFile() {
-        let encoder = JSONEncoder()
-        if let encoded = try? encoder.encode(items) {
-            let url = getDocumentsDirectory().appendingPathComponent("items.json")
-            try? encoded.write(to: url)
-            print("JSON сохранён по пути \(url)")
-        }
+    func fetchItemsFromAPI() {
+        guard let url = URL(string: "http://localhost:8081/api/tasks") else { return }
+        
+        URLSession.shared.dataTaskPublisher(for: url)
+            .map { $0.data }
+            .decode(type: [ItemModel].self, decoder: JSONDecoder())
+            .receive(on: DispatchQueue.main)
+            .replaceError(with: [])
+            .assign(to: \.items, on: self)
+            .store(in: &cancellables)
     }
     
-    // Загрузка списка из JSON
-    func loadFromFile() {
-        let url = getDocumentsDirectory().appendingPathComponent("items.json")
-        if let data = try? Data(contentsOf: url) {
-            let decoder = JSONDecoder()
-            if let decoded = try? decoder.decode([ItemModel].self, from: data) {
-                self.items = decoded
-            }
-        }
-    }
+
     
-    // Получаем директорию документов
-    func getDocumentsDirectory() -> URL {
-        let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
-        return paths[0]
-    }
-    
-    // Другие функции ViewModel
     func deleteItem(indexSet: IndexSet) {
         items.remove(atOffsets: indexSet)
     }
@@ -77,9 +28,30 @@ class ListViewModel: ObservableObject {
         items.move(fromOffsets: from, toOffset: to)
     }
     
-    func addItem(title: String) {
-        let newItem = ItemModel(title: title, isCompleted: false)
-        items.append(newItem)
+    func addItem(description: String) {
+        let newTask = CreateTaskDto(description: description)
+
+        guard let url = URL(string: "http://localhost:8081/api/tasks/create") else { return }
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        guard let httpBody = try? JSONEncoder().encode(newTask) else { return }
+        request.httpBody = httpBody
+
+        URLSession.shared.dataTask(with: request) { (data, response, error) in
+            guard let data = data, error == nil else {
+                print("Ошибка при добавлении задачи:", error ?? "Неизвестная ошибка")
+                return
+            }
+
+         
+            if let createdTask = try? JSONDecoder().decode(ItemModel.self, from: data) {
+                DispatchQueue.main.async {
+                    self.items.append(createdTask)
+                }
+            }
+        }.resume()
     }
     
     func updateItem(item: ItemModel) {
@@ -90,7 +62,8 @@ class ListViewModel: ObservableObject {
     
     func updateItemTitle(item: ItemModel, newTitle: String) {
         if let index = items.firstIndex(where: { $0.id == item.id }) {
-            items[index] = ItemModel(id: item.id, title: newTitle, isCompleted: item.isCompleted)
+            items[index] = ItemModel(id: item.id, description: newTitle, isDone: item.isDone)
         }
     }
+
 }

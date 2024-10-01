@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A762527D2CAC500700F63B64 /* TaskDto.swift in Sources */ = {isa = PBXBuildFile; fileRef = A762527C2CAC500700F63B64 /* TaskDto.swift */; };
+		A762527F2CAC503000F63B64 /* UpdateStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = A762527E2CAC503000F63B64 /* UpdateStatus.swift */; };
 		A7A659922C971F2B00188641 /* ToDoListMApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7A659912C971F2B00188641 /* ToDoListMApp.swift */; };
 		A7A659962C971F2C00188641 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A7A659952C971F2C00188641 /* Assets.xcassets */; };
 		A7A659992C971F2C00188641 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A7A659982C971F2C00188641 /* Preview Assets.xcassets */; };
@@ -21,6 +23,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		A762527C2CAC500700F63B64 /* TaskDto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskDto.swift; sourceTree = "<group>"; };
+		A762527E2CAC503000F63B64 /* UpdateStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateStatus.swift; sourceTree = "<group>"; };
 		A7A6598E2C971F2B00188641 /* ToDoListM.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ToDoListM.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A7A659912C971F2B00188641 /* ToDoListMApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToDoListMApp.swift; sourceTree = "<group>"; };
 		A7A659952C971F2C00188641 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -46,6 +50,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		A762527B2CAC4FEA00F63B64 /* DTO */ = {
+			isa = PBXGroup;
+			children = (
+				A762527C2CAC500700F63B64 /* TaskDto.swift */,
+				A762527E2CAC503000F63B64 /* UpdateStatus.swift */,
+			);
+			path = DTO;
+			sourceTree = "<group>";
+		};
 		A7A659852C971F2B00188641 = {
 			isa = PBXGroup;
 			children = (
@@ -65,6 +78,7 @@
 		A7A659902C971F2B00188641 /* ToDoListM */ = {
 			isa = PBXGroup;
 			children = (
+				A762527B2CAC4FEA00F63B64 /* DTO */,
 				A7A659AA2C97535000188641 /* ViewModels */,
 				A7A6599F2C971FA800188641 /* Views */,
 				A7A659912C971F2B00188641 /* ToDoListMApp.swift */,
@@ -178,9 +192,11 @@
 				A7A659922C971F2B00188641 /* ToDoListMApp.swift in Sources */,
 				A7A659B72C982E4200188641 /* Color.swift in Sources */,
 				A7A659AC2C97537300188641 /* ListViewModel.swift in Sources */,
+				A762527D2CAC500700F63B64 /* TaskDto.swift in Sources */,
 				A7A659BD2C9ADCE300188641 /* DocumentPickerView.swift in Sources */,
 				A7A659B22C9754D000188641 /* ListView.swift in Sources */,
 				A7A659AE2C97545800188641 /* AddView.swift in Sources */,
+				A762527F2CAC503000F63B64 /* UpdateStatus.swift in Sources */,
 				A7A659B92C9835CB00188641 /* AppSettings.swift in Sources */,
 				A7A659B02C97548200188641 /* ListRowView.swift in Sources */,
 			);
